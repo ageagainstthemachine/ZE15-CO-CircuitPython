@@ -5,16 +5,12 @@ This repository contains a CircuitPython library for interfacing with the ZE15-C
 
 **Datasheet:** [ZE15-CO Official Datasheet](http://winsen-sensor.com/d/files/ZE15-CO.pdf)
 
----
-
 ## Features
 - Supports both Initiative Upload Mode and Q&A Mode for sensor data retrieval.
 - Checksum validation to ensure data integrity.
 - Automatic resynchronization in case of misaligned packets.
 - Non-blocking implementation to maintain system responsiveness.
 - Debug mode for detailed troubleshooting output.
-
----
 
 ## Library Installation
 To use this library, copy the `ze15.py` file to the `lib` directory of your CircuitPython board.
@@ -75,12 +71,8 @@ sensor = ZE15CO(rx=board.GP1, tx=board.GP0, mode=ZE15CO.QNA_MODE, debug=True)
 ```
 This will print additional information such as raw data received, checksum validation, and misalignment handling.
 
----
-
 ## License
 This library is provided under the **GPL-3.0 License**. See [`LICENSE`](<LICENSE>) for details.
-
----
 
 ## Contributions
 Contributions are welcome. Feel free to submit pull requests or report issues with the repository.
