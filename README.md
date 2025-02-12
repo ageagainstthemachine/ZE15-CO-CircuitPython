@@ -57,6 +57,69 @@ while True:
     time.sleep(2)
 ```
 
+## Data Format and Protocol
+The ZE15-CO sensor communicates using a 9-byte UART packet format. The format differs slightly between modes.
+
+### Q&A Mode Request Format
+```
+| Byte|0   |1   |2   |3   |4   |5   |6   |7   |8   |
+|--------------------------------------------------|
+| Data|0xFF|0x01|0x86|0x00|0x00|0x00|0x00|0x00|CHK |
+```
+#### Byte Description:
+- **Byte 0 (0xFF):** Start byte.
+- **Byte 1 (0x01):** Command identifier (read gas concentration).
+- **Byte 2 (0x86):** Data type (CO gas request command).
+- **Bytes 3-7 (0x00):** Reserved, always zero.
+- **Byte 8 (CHK):** Checksum for validation.
+
+### Q&A Mode Response Format
+```
+| Byte|0   |1   |2   |3   |4   |5   |6   |7   |8   |
+|--------------------------------------------------|
+| Data|0xFF|0x86|HB  |LB  |0x00|0x00|0x00|0x00|CHK |
+```
+#### Byte Description:
+- **Byte 0 (0xFF):** Start byte.
+- **Byte 1 (0x86):** Command echo (confirming CO gas response).
+- **Bytes 2-3 (HB, LB):** High and low bytes of CO concentration.
+- **Bytes 4-7 (0x00):** Reserved, always zero.
+- **Byte 8 (CHK):** Checksum for validation.
+
+### Initiative Upload Mode Format
+```
+| Byte|0   |1   |2   |3   |4   |5   |6   |7   |8   |
+|--------------------------------------------------|
+| Data|0xFF|0x04|0x03|0x01|HB  |LB  |0x13|0x88|CHK |
+```
+#### Byte Description:
+- **Byte 0 (0xFF):** Start byte.
+- **Byte 1 (0x04):** Gas type identifier (CO gas).
+- **Byte 2 (0x03):** Measurement unit (ppm).
+- **Byte 3 (0x01):** Decimal places (0.1 ppm resolution).
+- **Bytes 4-5 (HB, LB):** High and low bytes of CO concentration.
+- **Bytes 6-7 (0x13, 0x88):** Full range (5000 ppm fixed value).
+- **Byte 8 (CHK):** Checksum for validation.
+
+### CO Concentration Calculation
+```
+CO ppm = ((High Byte << 8) | Low Byte) * 0.1
+```
+#### Calculation Steps:
+1. The high byte (`HB`) is shifted left by 8 bits to represent the most significant part of the value.
+2. The low byte (`LB`) is added to this shifted value, forming a 16-bit integer.
+3. This integer value is then multiplied by 0.1 to apply the sensor's scaling factor.
+
+### Checksum Calculation
+```
+CHK = (0xFF - (Sum of bytes 1 through 7) + 1) & 0xFF
+```
+#### Calculation Steps:
+1. Sum **bytes 1 through 7** of the response.
+2. Subtract this sum from **0xFF**.
+3. Add **1** to the result.
+4. Mask to **8 bits** using `& 0xFF` to ensure overflow does not affect the result.
+
 ## Test Programs
 ### Initiative Upload Mode Test
 This example ([`code.py`](<examples/Initiative-Upload-Mode/code.py>)) program continuously reads the CO concentration from the sensor.
