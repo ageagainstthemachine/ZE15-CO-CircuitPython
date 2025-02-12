@@ -18,8 +18,6 @@ To use this library, copy the `ze15.py` file to the `lib` directory of your Circ
 ## Usage
 ### Importing the Library
 ```python
-import board
-import time
 from ze15 import ZE15CO
 ```
 
