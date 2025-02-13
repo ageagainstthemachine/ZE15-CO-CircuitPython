@@ -38,10 +38,9 @@ In this mode, the ZE15-CO sensor automatically transmits data every second.
 
 #### Example Usage
 ```python
-while True:
-    co_ppm = sensor.read_co()
-    print(f"CO Concentration: {co_ppm:.1f} ppm")
-    time.sleep(1)
+sensor = ZE15CO(rx=board.GP1, tx=board.GP0, mode=ZE15CO.INITIATIVE_MODE)
+co_ppm = sensor.read_co()
+print(f"CO Concentration: {co_ppm:.1f} ppm")
 ```
 
 ### Q&A Mode
@@ -49,10 +48,9 @@ In this mode, the microcontroller must send a request to the sensor and then wai
 
 #### Example Usage
 ```python
-while True:
-    co_ppm = sensor.read_co()
-    print(f"CO Concentration: {co_ppm:.1f} ppm")
-    time.sleep(2)
+sensor = ZE15CO(rx=board.GP1, tx=board.GP0, mode=ZE15CO.QNA_MODE)
+co_ppm = sensor.read_co()
+print(f"CO Concentration: {co_ppm:.1f} ppm")
 ```
 
 ## Data Format and Protocol
